@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'M2_HOME'       // Must match the Maven name in Jenkins
-        jdk 'JAVA_HOME'       // Must match the JDK name in Jenkins
+        maven 'M2_HOME'       // Must match the Maven tool name in Jenkins
+        jdk 'JAVA_HOME'       // Must match the JDK tool name in Jenkins
     }
 
     environment {
@@ -43,27 +43,13 @@ pipeline {
         stage('Deploy JAR') {
             steps {
                 script {
-                    // Automatically detect the generated JAR name
+                    // Get the JAR filename (excluding original-*.jar files)
                     def jarFile = bat(
-                        script: 'for /f "delims=" %f in (\'dir /b target\\*.jar ^| findstr /v "original"\') do @echo %f',
+                        script: 'for /f "delims=" %%f in (\'dir /b target\\*.jar ^| findstr /v "original"\') do @echo %%f',
                         returnStdout: true
                     ).trim()
 
-                    echo "Running Spring Boot JAR: ${jarFile}"
+                    echo "Detected JAR: ${jarFile}"
 
                     // Run the JAR on port 8991 in background
                     bat "start java -jar target\\${jarFile} --server.port=8991"
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build, Test and Deployment completed successfully!'
-        }
-        failure {
-            echo 'Build or deployment failed.'
-        }
-    }
-}
