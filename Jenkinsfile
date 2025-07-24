@@ -2,12 +2,11 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.9.11' // Ensure this Maven version is configured in Jenkins Global Tool Configuration
-        JAVA_HOME 'jdk-17.0.2'       // Use the JDK name defined in Jenkins tools
+        maven 'Maven 3.9.11'    // Must match Maven tool name in Jenkins
+        jdk 'jdk-17.0.2'        // Must match JDK tool name in Jenkins
     }
 
     environment {
-        // Optional environment variables
         MAVEN_OPTS = "-Dmaven.test.failure.ignore=false"
     }
 
@@ -35,29 +34,4 @@ pipeline {
             }
         }
 
-        stage('Package') {
-            steps {
-                sh 'mvn package'
-            }
-        }
-
-        stage('Deploy') {
-            when {
-                branch 'main'
-            }
-            steps {
-                echo 'Deploy step - add deployment scripts here'
-                // sh './deploy.sh' or upload artifacts
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build and tests succeeded!'
-        }
-        failure {
-            echo 'Build or tests failed.'
-        }
-    }
-}
+        stage('Packa
