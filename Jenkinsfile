@@ -19,13 +19,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                bat 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                bat 'mvn test'
             }
             post {
                 always {
@@ -36,7 +36,7 @@ pipeline {
 
          stage('Package') {
             steps {
-                sh 'mvn package'
+                bat 'mvn package'
             }
         }
 
@@ -46,7 +46,7 @@ pipeline {
             }
             steps {
                 echo 'Deploy step - add deployment scripts here'
-                // sh './deploy.sh' or upload artifacts
+                // bat './deploy.bat' or upload artifacts
             }
         }
     }
