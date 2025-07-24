@@ -34,4 +34,29 @@ pipeline {
             }
         }
 
-        stage('Packa
+         stage('Package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo 'Deploy step - add deployment scripts here'
+                // sh './deploy.sh' or upload artifacts
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and tests succeeded!'
+        }
+        failure {
+            echo 'Build or tests failed.'
+        }
+    }
+}
