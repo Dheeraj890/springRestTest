@@ -23,33 +23,4 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                bat 'mvn test'
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml'
-                }
-            }
-        }
-
-        stage('Package') {
-            steps {
-                bat 'mvn package'
-            }
-        }
-
-        stage('Deploy JAR') {
-            steps {
-                script {
-                    // Get the JAR filename (excluding original-*.jar files)
-                    def jarFile = bat(
-                        script: 'for /f "delims=" %%f in (\'dir /b target\\*.jar ^| findstr /v "original"\') do @echo %%f',
-                        returnStdout: true
-                    ).trim()
-
-                    echo "Detected JAR: ${jarFile}"
-
-                    // Run the JAR on port 8991 in background
-                    bat "start java -jar target\\${jarFile} --server.port=8991"
+        stage('Tes
