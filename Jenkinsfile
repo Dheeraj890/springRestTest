@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'M2_HOME'       // Must match the Maven tool name in Jenkins
-        jdk 'JAVA_HOME'       // Must match the JDK tool name in Jenkins
+        maven 'M2_HOME'
+        jdk 'JAVA_HOME'
     }
 
     environment {
@@ -43,15 +43,22 @@ pipeline {
         stage('Deploy JAR') {
             steps {
                 script {
-                    // Auto-detect the jar file name (excluding original- jars)
-                    def jarFile = bat(
-                        script: 'for /f "delims=" %%f in (\'dir /b target\\*.jar ^| findstr /v "original"\') do @echo %%f',
-                        returnStdout: true
-                    ).trim()
+                    // Write just the JAR file name to a temp file
+                    bat '''
+                        @echo off
+                        for /f "delims=" %%f in ('dir /b target\\*.jar ^| findstr /v "original"') do (
+                            echo %%f > jarname.txt
+                            goto done
+                        )
+                        :done
+                    '''
+
+                    // Read the jar name from file
+                    def jarFile = readFile('jarname.txt').trim()
 
                     echo "Detected JAR: ${jarFile}"
 
-                    // Run the Spring Boot app on port 8991
+                    // Run it on port 8991
                     bat "start java -jar target\\${jarFile} --server.port=8991"
                 }
             }
@@ -63,7 +70,6 @@ pipeline {
             }
             steps {
                 echo 'Additional deployment steps can go here.'
-                // For example: upload to a server, call webhook, etc.
             }
         }
     }
